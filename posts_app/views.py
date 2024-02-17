@@ -154,11 +154,13 @@ def get_posts_by_userId(request, userId):
         user = get_object_or_404(User, pk=userId)
         if(user):
             posts = Post.objects.filter(user=user)
-            serializer = PostSerializer(posts, many=True)
+            # In here we can customize the object type of all posts
+            posts_data = [{'postId': post.postId, 'title': post.title, 'image': post.image, 'userId': post.user.userId,  'username': post.user.username, 'created_at': post.createdAt, 'updated_at': post.updatedAt} for post in
+                          posts]
             return Response({
                 'statusCode': 200,
                 'message': 'Get all posts by userId query was successful',
-                'data': serializer.data
+                'data': posts_data
             }, status=status.HTTP_200_OK)
         else:
             return Response({
