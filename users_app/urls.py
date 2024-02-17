@@ -1,6 +1,6 @@
-from django.contrib import admin;
-from django.urls import path;
-from users_app.views import getAllAdmins, createAdmin, getAdmin, deleteAdmin, updateAdmin;
+from django.contrib import admin
+from django.urls import path
+from users_app.views import getAllAdmins, createAdmin, getAdmin, deleteAdmin, updateAdmin
 
 urlpatterns = [
     path('getAdmins/', getAllAdmins, name="Get All Admins"),
