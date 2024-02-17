@@ -1,144 +1,144 @@
 from django.shortcuts import render
+from rest_framework.decorators import  api_view
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from rest_framework import status
-from .models import Admin
-from .serializer import AdminSerializer
+from .models import User
+from .serializer import UserSerializer
 
 ###################################
-# GET ADMINS
+# GET USERS
 ###################################
 @api_view(['GET'])
-def getAllAdmins(request):
-    try: 
-        admins = Admin.objects.all()
-        serializer = AdminSerializer(admins, many=True)
+def get_users(request):
+    try:
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
         return Response({
             'statusCode': 200,
-            'message': 'Get all admins query was successful',
+            'message': 'Get all users query was successful',
             'admins': serializer.data
         }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({
             'statusCode': 500,
-            'message': 'Get all admins query internal server error',
+            'message': 'Get all users query internal server error',
             'error': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 ###################################
-# CREATE ADMIN
+# CREATE USER
 ###################################
 @api_view(['POST'])
-def createAdmin(request):
+def create_user(request):
     try:
         # Get request body data but complex data
         data = request.data
         # Create data structure according to python
-        serializer = AdminSerializer(data = data)
+        serializer = UserSerializer(data = data)
         if serializer.is_valid():
             serializer.save()
             return Response({
                 'statusCode': 201,
-                'message': 'Create admin query was successful',
+                'message': 'Create user query was successful',
                 'data': serializer.data
             }, status=status.HTTP_201_CREATED)
         else:
             return Response({
                 'statusCode': 400,
-                'message': 'Create admin query was failed',
+                'message': 'Create user query was failed',
                 'error': serializer.errors
             }, status=status.HTTP_400_BAD_REQUEST)
     except:
         return Response({
             'statusCode': 500,
-            'message': 'Create admin query internal server error',
+            'message': 'Create user query internal server error',
             'error': serializer.errors
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
 ###################################
-# GET ADMIN
+# GET USER
 ###################################
 @api_view(["GET"])
-def getAdmin(request, pk):
+def get_user(request, pk):
     try:
         if request.method == 'GET':
-            admin = Admin.objects.get(pk=pk)
-            serializer = AdminSerializer(admin)
+            admin = User.objects.get(pk=pk)
+            serializer = UserSerializer(admin)
             return Response({
                 'statusCode': 200,
-                'message': 'Get admin query was successful',
+                'message': 'Get user query was successful',
                 'data': serializer.data
             }, status=status.HTTP_200_OK)
-    except Admin.DoesNotExist:
+    except User.DoesNotExist:
         return Response({
             'statusCode': 404,
-            'message': 'Get admin query was failed. No book was found',
+            'message': 'Get user query was failed. No user was found',
         }, status=status.HTTP_404_NOT_FOUND)
     except:
         return Response({
             'statusCode': 500,
-            'message': 'Get admin query internal server error',
+            'message': 'Get user query internal server error',
             'error': serializer.errors
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
 ###################################
-# DELETE ADMIN
-###################################
-@api_view(['DELETE'])
-def deleteAdmin(request, pk):
-    try:
-        if request.method == 'DELETE':
-            admin = Admin.objects.get(pk=pk)
-            admin.delete()
-            return Response({
-                'statusCode': 200,
-                'message': 'Delete admin query was successful',
-                'deleted': True
-            });
-    except Admin.DoesNotExist:
-        return Response({
-            'statusCode': 404,
-            'message': 'Delete admin query was failed. No book was found',
-        }, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        return Response({
-            'statusCode': 500,
-            'message': 'Delete admin query internal server error',
-            'error': str(e)
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-###################################
-# UPDATE BOOK
+# UPDATE USER
 ###################################
 @api_view(['PUT'])
-def updateAdmin(request, pk):
+def update_user(request, pk):
     try:
-        data = request.data;
+        data = request.data
 
         if request.method == 'PUT':
-            admin = Admin.objects.get(pk=pk)
-            serializer = AdminSerializer(admin, data)
+            user = User.objects.get(pk=pk)
+            serializer = UserSerializer(user, data)
             if serializer.is_valid():
                 serializer.save()
                 return Response({
                     'statusCode': 200,
-                    'message': 'Update admin query was successful',
+                    'message': 'Update user query was successful',
                     'data': serializer.data
                 });
             else:
                 return Response({
                     'statusCode': 400,
-                    'message': 'Update admin query was failed',
+                    'message': 'Update user query was failed',
                     'error': serializer.errors
-                });
-    except Admin.DoesNotExist:
+                })
+    except User.DoesNotExist:
         return Response({
             'statusCode': 404,
-            'message': 'Update admin query was failed. No book was found',
+            'message': 'Update user query was failed. No user was found',
         }, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({
             'statusCode': 500,
-            'message': 'Update admin query internal server error',
+            'message': 'Update user query internal server error',
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+###################################
+# DELETE USER
+###################################
+@api_view(['DELETE'])
+def delete_user(request, pk):
+    try:
+        if request.method == 'DELETE':
+            user = User.objects.get(pk=pk)
+            user.delete()
+            return Response({
+                'statusCode': 200,
+                'message': 'Delete user query was successful',
+                'deleted': True
+            });
+    except User.DoesNotExist:
+        return Response({
+            'statusCode': 404,
+            'message': 'Delete user query was failed. No user was found',
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'statusCode': 500,
+            'message': 'Delete user query internal server error',
             'error': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
