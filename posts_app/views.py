@@ -3,7 +3,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from .models import Post
+from system_users_app.models import User
 from .serializer import PostSerializer
+from django.shortcuts import get_object_or_404
 
 ###################################
 # GET POSTS
@@ -140,5 +142,32 @@ def update_post(request, pk):
         return Response({
             'statusCode': 500,
             'message': 'Update post query internal server error',
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+###################################
+# GET POSTS BY USERID
+###################################
+@api_view(['GET'])
+def get_posts_by_userId(request, userId):
+    try:
+        user = get_object_or_404(User, pk=userId)
+        if(user):
+            posts = Post.objects.filter(user=user)
+            serializer = PostSerializer(posts, many=True)
+            return Response({
+                'statusCode': 200,
+                'message': 'Get all posts by userId query was successful',
+                'data': serializer.data
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'statusCode': 403,
+                'message': 'Get all posts by userId query was failed. User id not found'
+            }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            'statusCode': 500,
+            'message': 'Get all posts by userId query internal server error',
             'error': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
